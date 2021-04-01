@@ -9,8 +9,8 @@
 # 2: Application error
 # 3: Network error
 
-CUR_VER="v4.27.5"
-NEW_VER="v4.27.5"
+CUR_VER="v4.21.3"
+NEW_VER="v4.21.3"
 ARCH=""
 VDIS="64"
 ZIPFILE="/tmp/v2ray/v2ray.zip"
@@ -123,7 +123,7 @@ sysArch(){
 downloadV2Ray(){
     rm -rf /tmp/v2ray
     mkdir -p /tmp/v2ray    
-    DOWNLOAD_LINK="https://github.com/v2ray/v2ray-core/releases/download/v4.27.5/v2ray-linux-64.zip" 
+    DOWNLOAD_LINK="https://github.com/v2ray/v2ray-core/releases/download/v4.21.3/v2ray-linux-64.zip" 
     colorEcho ${BLUE} "Downloading V2Ray: ${DOWNLOAD_LINK}"
     curl ${PROXY} -L -H "Cache-Control: no-cache" -o ${ZIPFILE} ${DOWNLOAD_LINK}
     if [ $? != 0 ];then
@@ -184,8 +184,8 @@ extract(){
         colorEcho ${RED} "Failed to extract V2Ray."
         return 2
     fi
-    if [[ -d "/tmp/v2ray/v2ray-v4.27.5-linux-64" ]]; then
-      VSRC_ROOT="/tmp/v2ray/v2ray-v4.27.5-linux-64}"
+    if [[ -d "/tmp/v2ray/v2ray-v4.21.3-linux-64" ]]; then
+      VSRC_ROOT="/tmp/v2ray/v2ray-v4.21.3-linux-64}"
     fi
     return 0
 }
@@ -305,7 +305,7 @@ installInitScript(){
     if [[ -n "${SYSTEMCTL_CMD}" ]];then
         if [[ ! -f "/etc/systemd/system/v2ray.service" ]]; then
             if [[ ! -f "/lib/systemd/system/v2ray.service" ]]; then
-                cp "${VSRC_ROOT}/systemd/system/v2ray.service" "/etc/systemd/system/"
+                cp "${VSRC_ROOT}/systemd/v2ray.service" "/etc/systemd/system/"
                 systemctl enable v2ray.service
             fi
         fi
