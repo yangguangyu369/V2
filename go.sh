@@ -9,8 +9,8 @@
 # 2: Application error
 # 3: Network error
 
-CUR_VER=""
-NEW_VER=""
+CUR_VER="v4.27.5"
+NEW_VER="v4.27.5"
 ARCH=""
 VDIS="64"
 ZIPFILE="/tmp/v2ray/v2ray.zip"
@@ -122,12 +122,8 @@ sysArch(){
 
 downloadV2Ray(){
     rm -rf /tmp/v2ray
-    mkdir -p /tmp/v2ray
-    if [[ "${DIST_SRC}" == "jsdelivr" ]]; then
-        DOWNLOAD_LINK="https://cdn.jsdelivr.net/gh/v2ray/dist/v2ray-linux-${VDIS}.zip"
-    else
-        DOWNLOAD_LINK="https://github.com/v2ray/v2ray-core/releases/download/${NEW_VER}/v2ray-linux-${VDIS}.zip"
-    fi
+    mkdir -p /tmp/v2ray    
+    DOWNLOAD_LINK="https://github.com/v2ray/v2ray-core/releases/download/v4.27.5/v2ray-linux-64.zip" 
     colorEcho ${BLUE} "Downloading V2Ray: ${DOWNLOAD_LINK}"
     curl ${PROXY} -L -H "Cache-Control: no-cache" -o ${ZIPFILE} ${DOWNLOAD_LINK}
     if [ $? != 0 ];then
@@ -188,8 +184,8 @@ extract(){
         colorEcho ${RED} "Failed to extract V2Ray."
         return 2
     fi
-    if [[ -d "/tmp/v2ray/v2ray-${NEW_VER}-linux-${VDIS}" ]]; then
-      VSRC_ROOT="/tmp/v2ray/v2ray-${NEW_VER}-linux-${VDIS}"
+    if [[ -d "/tmp/v2ray/v2ray-v4.27.5-linux-64" ]]; then
+      VSRC_ROOT="/tmp/v2ray/v2ray-v4.27.5-linux-64}"
     fi
     return 0
 }
@@ -400,51 +396,13 @@ checkUpdate(){
 }
 
 main(){
-    #helping information
-    [[ "$HELP" == "1" ]] && Help && return
-    [[ "$CHECK" == "1" ]] && checkUpdate && return
-    [[ "$REMOVE" == "1" ]] && remove && return
-    
+   
     sysArch
-    # extract local file
-    if [[ $LOCAL_INSTALL -eq 1 ]]; then
-        colorEcho ${YELLOW} "Installing V2Ray via local file. Please make sure the file is a valid V2Ray package, as we are not able to determine that."
-        NEW_VER=local
-        installSoftware unzip || return $?
-        rm -rf /tmp/v2ray
-        extract $LOCAL || return $?
-        #FILEVDIS=`ls /tmp/v2ray |grep v2ray-v |cut -d "-" -f4`
-        #SYSTEM=`ls /tmp/v2ray |grep v2ray-v |cut -d "-" -f3`
-        #if [[ ${SYSTEM} != "linux" ]]; then
-        #    colorEcho ${RED} "The local V2Ray can not be installed in linux."
-        #    return 1
-        #elif [[ ${FILEVDIS} != ${VDIS} ]]; then
-        #    colorEcho ${RED} "The local V2Ray can not be installed in ${ARCH} system."
-        #    return 1
-        #else
-        #    NEW_VER=`ls /tmp/v2ray |grep v2ray-v |cut -d "-" -f2`
-        #fi
-    else
-        # download via network and extract
+       # download via network and extract
         installSoftware "curl" || return $?
-        getVersion
-        RETVAL="$?"
-        if [[ $RETVAL == 0 ]] && [[ "$FORCE" != "1" ]]; then
-            colorEcho ${BLUE} "Latest version ${CUR_VER} is already installed."
-            if [[ "${ERROR_IF_UPTODATE}" == "1" ]]; then
-              return 10
-            fi
-            return
-        elif [[ $RETVAL == 3 ]]; then
-            return 3
-        else
-            colorEcho ${BLUE} "Installing V2Ray ${NEW_VER} on ${ARCH}"
-            downloadV2Ray || return $?
-            installSoftware unzip || return $?
-            extract ${ZIPFILE} || return $?
-        fi
-    fi 
-    
+        downloadV2Ray || return $?
+        installSoftware unzip || return $?
+            extract ${ZIPFILE} || return $?          
     if [[ "${EXTRACT_ONLY}" == "1" ]]; then
         colorEcho ${GREEN} "V2Ray extracted to ${VSRC_ROOT}, and exiting..."
         return 0
